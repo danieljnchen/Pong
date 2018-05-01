@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 public class Paddle extends UIObject {
     private static final double width = 10;
     private static final double height = 60;
-    private static final double speed = 1;
+    private static final double speed = 8;
     private static final double distFromSide = 15;
     private boolean side;
     private Point2D position;
@@ -21,6 +21,7 @@ public class Paddle extends UIObject {
 
     public void move(boolean direction) {
         position = position.add(0,speed*(direction?1:-1));
+        System.out.println("Paddle moved");
     }
 
     public void setPosition(double yPos) {

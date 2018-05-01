@@ -90,17 +90,37 @@ public class Main extends Application {
         });
         root.getChildren().add(restartButton);
 
-        canvas.addEventHandler(KeyEvent.KEY_PRESSED, KeyEvent->{
-            upPressed = KeyEvent.getCode() == KeyCode.UP;
-            downPressed = KeyEvent.getCode() == KeyCode.DOWN;
-            wPressed = KeyEvent.getCode() == KeyCode.W;
-            sPressed = KeyEvent.getCode() == KeyCode.S;
+        root.addEventHandler(KeyEvent.KEY_PRESSED, KeyEvent->{
+             switch(KeyEvent.getCode()) {
+                 case UP:
+                     upPressed = true;
+                     break;
+                 case DOWN:
+                     downPressed = true;
+                     break;
+                 case S:
+                     sPressed = true;
+                     break;
+                 case W:
+                     wPressed = true;
+                     break;
+             }
         });
-        canvas.addEventHandler(KeyEvent.KEY_RELEASED, KeyEvent->{
-            upPressed = KeyEvent.getCode() == KeyCode.UP;
-            downPressed = KeyEvent.getCode() == KeyCode.DOWN;
-            wPressed = KeyEvent.getCode() == KeyCode.W;
-            sPressed = KeyEvent.getCode() == KeyCode.S;
+        root.addEventHandler(KeyEvent.KEY_RELEASED, KeyEvent->{
+            switch(KeyEvent.getCode()) {
+                case UP:
+                    upPressed = false;
+                    break;
+                case DOWN:
+                    downPressed = false;
+                    break;
+                case S:
+                    sPressed = false;
+                    break;
+                case W:
+                    wPressed = false;
+                    break;
+            }
         });
 
         lastIteration = System.currentTimeMillis();
@@ -133,16 +153,16 @@ public class Main extends Application {
                         case PLAYING:
                             message.setText("");
                             if(wPressed) {
-                                leftPaddle.move(true);
-                            }
-                            if(sPressed) {
                                 leftPaddle.move(false);
                             }
+                            if(sPressed) {
+                                leftPaddle.move(true);
+                            }
                             if(upPressed) {
-                                rightPaddle.move(true);
+                                rightPaddle.move(false);
                             }
                             if(downPressed) {
-                                rightPaddle.move(false);
+                                rightPaddle.move(true);
                             }
                             draw(gc);
                             if(ball.getOutOfBounds() > -1) {
