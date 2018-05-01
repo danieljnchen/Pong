@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -17,10 +19,19 @@ public class Main extends Application {
     public static final double height = 800;
     public static final double yBound = 20;
     public static final double xBound = 20;
+    public static final double xOutBound = 10;
+    public static Paddle leftPaddle;
+    public static Paddle rightPaddle;
     private static long lastIteration;
     private static int countdown = 3;
     private static long countdownTime;
     private static double frameRate = 50; // frames per second
+    private static int[] score = {0,0};
+    private Text scoreText;
+    private boolean wPressed = false;
+    private boolean sPressed = false;
+    private boolean upPressed = false;
+    private boolean downPressed = false;
 
     public enum States {
         STARTUP,
@@ -43,12 +54,11 @@ public class Main extends Application {
         root.getChildren().add(canvas);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-        Paddle leftPaddle = new Paddle(false);
-        Paddle rightPaddle = new Paddle(true);
+        leftPaddle = new Paddle(false);
+        rightPaddle = new Paddle(true);
         Ball ball = new Ball();
 
-        int[] score = {0,0};
-        Text scoreText = new Text(score[0] + " : " + score[1]);
+        updateScore();
         scoreText.setLayoutX(width/2);
         scoreText.setLayoutY(30);
         scoreText.setFont(Font.font("Arial",30));
@@ -80,6 +90,19 @@ public class Main extends Application {
         });
         root.getChildren().add(restartButton);
 
+        canvas.addEventHandler(KeyEvent.KEY_PRESSED, KeyEvent->{
+            upPressed = KeyEvent.getCode() == KeyCode.UP;
+            downPressed = KeyEvent.getCode() == KeyCode.DOWN;
+            wPressed = KeyEvent.getCode() == KeyCode.W;
+            sPressed = KeyEvent.getCode() == KeyCode.S;
+        });
+        canvas.addEventHandler(KeyEvent.KEY_RELEASED, KeyEvent->{
+            upPressed = KeyEvent.getCode() == KeyCode.UP;
+            downPressed = KeyEvent.getCode() == KeyCode.DOWN;
+            wPressed = KeyEvent.getCode() == KeyCode.W;
+            sPressed = KeyEvent.getCode() == KeyCode.S;
+        });
+
         lastIteration = System.currentTimeMillis();
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
@@ -109,8 +132,22 @@ public class Main extends Application {
                             break;
                         case PLAYING:
                             message.setText("");
+                            if(wPressed) {
+                                leftPaddle.move(true);
+                            }
+                            if(sPressed) {
+                                leftPaddle.move(false);
+                            }
+                            if(upPressed) {
+                                rightPaddle.move(true);
+                            }
+                            if(downPressed) {
+                                rightPaddle.move(false);
+                            }
                             draw(gc);
-                            if(ball.getOutOfBounds() != 0) {
+                            if(ball.getOutOfBounds() > -1) {
+                                score[ball.getOutOfBounds()] += 1;
+                                updateScore();
                                 state = States.END;
                             }
                             break;
@@ -121,6 +158,12 @@ public class Main extends Application {
                 }
             }
         }.start();
+    }
+    public void updateScore() {
+        if(scoreText == null) {
+            scoreText = new Text();
+        }
+        scoreText.setText(score[0] + " : " + score[1]);
     }
     public void draw(GraphicsContext gc) {
         gc.clearRect(0,0,width,height);

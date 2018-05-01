@@ -16,17 +16,21 @@ public class Ball extends UIObject {
     }
     private void update() {
         if(position.getY()>Main.height-Main.yBound || position.getY()<Main.yBound) {
+            System.out.println("Hit horizontal bound");
             velocity = velocity.subtract(0,2*velocity.getY());
+        } else if((position.getX()<Main.xBound && Math.abs(Main.leftPaddle.getYPos()-position.getY())<20) || (position.getX()>Main.width-Main.xBound && Math.abs(Main.rightPaddle.getYPos()-position.getY())<20)) {
+            System.out.println("Hit vertical bound");
+            velocity = velocity.subtract(2*velocity.getX(),0);
         }
         position = position.add(velocity);
     }
     public int getOutOfBounds() {
-        if(position.getX()<Main.xBound) {
-            return -1;
-        } else if(position.getX()>Main.width-Main.xBound) {
+        if(position.getX()<Main.xOutBound) {
             return 1;
-        } else {
+        } else if(position.getX()>Main.width-Main.xOutBound) {
             return 0;
+        } else {
+            return -1;
         }
     }
     public void reset() {

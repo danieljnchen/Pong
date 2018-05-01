@@ -6,7 +6,7 @@ public class Paddle extends UIObject {
     private static final double width = 10;
     private static final double height = 60;
     private static final double speed = 1;
-    private static final double distFromSide = 30;
+    private static final double distFromSide = 15;
     private boolean side;
     private Point2D position;
 
@@ -15,12 +15,16 @@ public class Paddle extends UIObject {
         reset();
     }
 
+    public double getYPos() {
+        return position.getY();
+    }
+
     public void move(boolean direction) {
         position = position.add(0,speed*(direction?1:-1));
     }
-    public void draw(GraphicsContext gc) {
-        gc.setFill(Color.BLACK);
-        gc.fillRect(position.getX()-width/2, position.getY()-height/2, width, height);
+
+    public void setPosition(double yPos) {
+        position = position.add(0, yPos-position.getY());
     }
 
     public void reset() {
@@ -29,5 +33,10 @@ public class Paddle extends UIObject {
         } else {
             position = new Point2D(distFromSide, Main.height/2);
         }
+    }
+
+    public void draw(GraphicsContext gc) {
+        gc.setFill(Color.BLACK);
+        gc.fillRect(position.getX()-width/2, position.getY()-height/2, width, height);
     }
 }
