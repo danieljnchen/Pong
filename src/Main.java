@@ -26,7 +26,7 @@ public class Main extends Application {
     private static int countdown = 3;
     private static long countdownTime;
     private static double frameRate = 50; // frames per second
-    private static int[] score = {0,0};
+    private static int[] score = new int[2];
     private Text scoreText;
     private boolean wPressed = false;
     private boolean sPressed = false;
@@ -36,6 +36,7 @@ public class Main extends Application {
     public enum States {
         STARTUP,
         START,
+        STARTING,
         PLAYING,
         END
     }
@@ -58,7 +59,7 @@ public class Main extends Application {
         rightPaddle = new Paddle(true);
         Ball ball = new Ball();
 
-        updateScore();
+        updateScore(0,0);
         scoreText.setLayoutX(width/2);
         scoreText.setLayoutY(30);
         scoreText.setFont(Font.font("Arial",30));
@@ -74,22 +75,31 @@ public class Main extends Application {
         startButton.setLayoutX(0);
         startButton.setLayoutY(0);
         startButton.setOnAction(value -> {
-            if(state==States.STARTUP) {
-                state = States.START;
+            if(state == States.STARTUP) {
+                state = States.STARTING;
             }
         });
         root.getChildren().add(startButton);
 
-        Button restartButton = new Button("restart");
+        Button restartButton = new Button("Restart");
         restartButton.setLayoutX(60);
         restartButton.setLayoutY(0);
         restartButton.setOnAction(value -> {
-            if(state==States.END) {
+            if(state == States.END) {
                 state = States.STARTUP;
             }
         });
         root.getChildren().add(restartButton);
 
+        Button newPointButton = new Button("New Point");
+        newPointButton.setLayoutX(135);
+        newPointButton.setLayoutY(0);
+        newPointButton.setOnAction(value -> {
+            if(state == States.END) {
+                state = States.STARTING;
+            }
+        });
+        root.getChildren().add(newPointButton);
         root.addEventHandler(KeyEvent.KEY_PRESSED, KeyEvent->{
              switch(KeyEvent.getCode()) {
                  case UP:
@@ -130,13 +140,15 @@ public class Main extends Application {
                     lastIteration = System.currentTimeMillis();
                     switch(state) {
                         case STARTUP:
-                            leftPaddle.reset();
-                            rightPaddle.reset();
-                            ball.reset();
+                            updateScore(0,0);
                             draw(gc);
                             message.setText("Welcome");
+                            break;
+                        case STARTING:
+                            reset();
                             countdown = 3;
                             countdownTime = System.currentTimeMillis();
+                            state = States.START;
                             break;
                         case START:
                             if(countdown > 0) {
@@ -146,7 +158,8 @@ public class Main extends Application {
                                     countdownTime = System.currentTimeMillis();
                                 }
                             } else {
-                                ball.addVelocity(new Point2D(6, 6));
+                                //@TODO generate random starting velocity
+                                ball.addVelocity(new Point2D(8, 8));
                                 state = States.PLAYING;
                             }
                             break;
@@ -184,6 +197,16 @@ public class Main extends Application {
             scoreText = new Text();
         }
         scoreText.setText(score[0] + " : " + score[1]);
+    }
+    public void updateScore(int left, int right) {
+        score[0] = left;
+        score[1] = right;
+        updateScore();
+    }
+    public void reset() {
+        for(UIObject o : UIObject.uiObjects) {
+            o.reset();
+        }
     }
     public void draw(GraphicsContext gc) {
         gc.clearRect(0,0,width,height);

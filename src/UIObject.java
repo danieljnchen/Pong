@@ -8,4 +8,5 @@ public abstract class UIObject {
         uiObjects.add(this);
     }
     public abstract void draw(GraphicsContext gc);
+    public abstract void reset();
 }
