@@ -24,6 +24,7 @@ public class Main extends Application {
     public static Paddle rightPaddle;
     private static long lastIteration;
     private static int countdown = 3;
+    private static final int speed = 10;
     private static long countdownTime;
     private static double frameRate = 50; // frames per second
     private static int[] score = new int[2];
@@ -158,8 +159,12 @@ public class Main extends Application {
                                     countdownTime = System.currentTimeMillis();
                                 }
                             } else {
-                                //@TODO generate random starting velocity
-                                ball.addVelocity(new Point2D(8, 8));
+                                /*int side = (Math.random()>.5)?-1:1;
+                                System.out.println("Side: " + side);
+                                double angle = 2*Math.PI/4*(1/2 - Math.random());
+                                System.out.println("Angle:" + angle);
+                                ball.addVelocity(new Point2D(speed*side*Math.cos(angle),speed*Math.sin(angle)));*/
+                                ball.addVelocity(new Point2D(5,0));
                                 state = States.PLAYING;
                             }
                             break;

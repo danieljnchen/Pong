@@ -16,10 +16,8 @@ public class Ball extends UIObject {
     }
     private void update() {
         if(position.getY()>Main.height-Main.yBound || position.getY()<Main.yBound) {
-            System.out.println("Hit horizontal bound");
             velocity = velocity.subtract(0,2*velocity.getY());
-        } else if((position.getX()<Main.xBound && Math.abs(Main.leftPaddle.getYPos()-position.getY())<40) || (position.getX()>Main.width-Main.xBound && Math.abs(Main.rightPaddle.getYPos()-position.getY())<40)) {
-            System.out.println("Hit vertical bound");
+        } else if(((position.getX()-side/2)<(Main.xBound+Paddle.width/2) && Math.abs(Main.leftPaddle.getYPos()-position.getY())<(Paddle.height/2+side/2)) || (((position.getX()+side/2)>(Main.width-Main.xBound+Paddle.width/2) && (Math.abs(Main.rightPaddle.getYPos()-position.getY())<(Paddle.height/2+side/2))))) {
             velocity = velocity.subtract(2*velocity.getX(),0);
         }
         position = position.add(velocity);
